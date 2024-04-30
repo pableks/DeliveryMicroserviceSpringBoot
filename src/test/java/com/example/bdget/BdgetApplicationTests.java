@@ -1,13 +1,15 @@
-package com.example.deliveryapp;
+package com.example.bdget;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class DeliveryappApplicationTests {
+class BdgetApplicationTests {
 
 	@Test
 	void contextLoads() {
 	}
 
 }
+
+
