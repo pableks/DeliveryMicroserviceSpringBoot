@@ -1,43 +1,60 @@
-package com.example.deliveryapp.model;
+package com.example.DeliveryApp.model;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import org.springframework.hateoas.RepresentationModel;
 
 @Entity
-@Table(name = "rol")
-public class Rol {
-    
+@Table(name = "roles")
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@id")
+public class Rol extends RepresentationModel<Rol> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    
-    @Column(name = "nombre")
-    private String nombre;
+    @Column(name = "id")
+    private Long id;
 
+    @Column(name = "rol")
+    private String rol;
 
-    public Rol() {
-    }
+    @Column(name = "activo")
+    private boolean activo;
 
-    // Constructor con parámetros
-    public Rol(int id, String nombre) {
-        this.id = id;
-        this.nombre = nombre;
-    }
+    @ManyToOne
+    @JoinColumn(name = "usuario_id")
+    @JsonBackReference
+    private Usuario usuario;
 
-    // Getters y setters
-
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public String getRol() {
+        return rol;
+    }
+
+    public void setRol(String rol) {
+        this.rol = rol;
+    }
+
+    public boolean isActivo() {
+        return activo;
+    }
+
+    public void setActivo(boolean activo) {
+        this.activo = activo;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 }

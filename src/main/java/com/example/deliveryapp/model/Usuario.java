@@ -1,54 +1,41 @@
-package com.example.deliveryapp.model;
+package com.example.DeliveryApp.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.*;
 import java.util.List;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Email;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import org.springframework.hateoas.RepresentationModel;
 
 @Entity
-@Table(name = "usuario")
-public class Usuario {
-
+@Table(name = "usuarios")
+@JsonIdentityReference(alwaysAsId = true)
+public class Usuario extends RepresentationModel<Usuario> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
-    @NotBlank(message = "El nombre no puede estar vacío.")
-    @Column(name = "nombre")
-    private String nombre;
+    @Column(name = "username")
+    @NotBlank(message = "El nombre de usuario no puede estar vacío")
+    private String username;
 
-    @Email(message = "El formato del email no es válido.")
-    @NotBlank(message = "El email no puede estar vacío.")
-    @Column(name = "email")
-    private String email;
-
-    @NotBlank(message = "La contraseña no puede estar vacía.")
     @Column(name = "password")
+    @NotBlank(message = "La contraseña no puede estar vacía")
+    @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres")
     private String password;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "rol_id", nullable = false)
-    private Rol rol;
-
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Direccion> direcciones;
+    //@NotEmpty(message = "El usuario debe tener al menos un rol asignado")
+    private List<Rol> roles;
 
-    // Constructores
-    public Usuario() {
-    }
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    //@NotEmpty(message = "El usuario debe tener al menos un despacho asignado")
+    private List<Despacho> despachos;
 
-    public Usuario(Long id, String nombre, String email, String password, Rol rol, List<Direccion> direcciones) {
-        this.id = id;
-        this.nombre = nombre;
-        this.email = email;
-        this.password = password;
-        this.rol = rol;
-        this.direcciones = direcciones;
-    }
-
-    // Getters y Setters
     public Long getId() {
         return id;
     }
@@ -57,20 +44,12 @@ public class Usuario {
         this.id = id;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getUsername() {
+        return username;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
@@ -81,19 +60,19 @@ public class Usuario {
         this.password = password;
     }
 
-    public Rol getRol() {
-        return rol;
+    public List<Rol> getRoles() {
+        return roles;
     }
 
-    public void setRol(Rol rol) {
-        this.rol = rol;
+    public void setRoles(List<Rol> roles) {
+        this.roles = roles;
     }
 
-    public List<Direccion> getDirecciones() {
-        return direcciones;
+    public List<Despacho> getDespachos() {
+        return despachos;
     }
 
-    public void setDirecciones(List<Direccion> direcciones) {
-        this.direcciones = direcciones;
+    public void setDespachos(List<Despacho> despachos) {
+        this.despachos = despachos;
     }
 }
