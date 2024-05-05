@@ -26,7 +26,7 @@ public class UsuariosControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private UsuariosService regUsuServiceMock;
+    private UsuariosService usuariosServiceMock;
 
     @Test
     public void getAllUsuariosTest() throws Exception {
@@ -42,7 +42,7 @@ public class UsuariosControllerTest {
     
         List<Usuario> usuarios = Arrays.asList(usuario1, usuario2);
     
-        when(regUsuServiceMock.getAllUsuarios()).thenReturn(usuarios);
+        when(usuariosServiceMock.getAllUsuarios()).thenReturn(usuarios);
     
         mockMvc.perform(MockMvcRequestBuilders.get("/usuarios"))
             .andExpect(MockMvcResultMatchers.status().isOk())
@@ -62,7 +62,7 @@ public class UsuariosControllerTest {
         usuario.setUsername(username);
         usuario.setPassword(password);
 
-        when(regUsuServiceMock.findByUsername(username)).thenReturn(usuario);
+        when(usuariosServiceMock.findByUsername(username)).thenReturn(usuario);
 
         String requestBody = "{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}";
 

@@ -35,11 +35,11 @@ public class UsuariosController {
     private static final Logger log = LoggerFactory.getLogger(UsuariosController.class);
 
     @Autowired
-    private UsuariosService regUsuService;
+    private UsuariosService usuariosService;
 
     @GetMapping
     public CollectionModel<EntityModel<Usuario>> getAllUsuarios() {
-        List<Usuario> usuarios = regUsuService.getAllUsuarios();
+        List<Usuario> usuarios = usuariosService.getAllUsuarios();
         log.info("GET /usuarios");
         log.info("Retornando todos los usuarios");
         List<EntityModel<Usuario>> usuariosResources = usuarios.stream()
@@ -59,7 +59,7 @@ public class UsuariosController {
 
     @GetMapping("/{id}")
     public EntityModel<Usuario> getUsuarioById(@Validated @PathVariable Long id) {
-        Optional<Usuario> usuario = regUsuService.getUsuarioById(id);
+        Optional<Usuario> usuario = usuariosService.getUsuarioById(id);
 
         if (usuario.isPresent()) {
             return EntityModel.of(usuario.get(),
@@ -68,13 +68,13 @@ public class UsuariosController {
                     WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getAllUsuarios())
                             .withRel("all-usuarios"));
         } else {
-            throw new RegUsuNotFoundException("No se encontró el usuario con ID " + id);
+            throw new usuariosNotFoundException("No se encontró el usuario con ID " + id);
         }
     }
 
     @PostMapping
     public EntityModel<Usuario> createUsuario(@Valid @RequestBody Usuario usuario) {
-        Usuario nuevoUsuario = regUsuService.createUsuario(usuario);
+        Usuario nuevoUsuario = usuariosService.createUsuario(usuario);
         return EntityModel.of(nuevoUsuario,
                 WebMvcLinkBuilder
                         .linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getUsuarioById(nuevoUsuario.getId()))
@@ -85,7 +85,7 @@ public class UsuariosController {
 
     @PutMapping("/{id}")
     public EntityModel<Usuario> updateUsuario(@PathVariable Long id, @RequestBody Usuario usuario) {
-        Usuario usuarioActualizado = regUsuService.updateUsuario(id, usuario);
+        Usuario usuarioActualizado = usuariosService.updateUsuario(id, usuario);
         return EntityModel.of(usuarioActualizado,
                 WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getUsuarioById(id)).withSelfRel(),
                 WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getAllUsuarios())
@@ -95,7 +95,7 @@ public class UsuariosController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUsuario(@Validated @PathVariable Long id) {
         try {
-            regUsuService.deleteUsuario(id);
+            usuariosService.deleteUsuario(id);
             return ResponseEntity.ok(new ErrorResponse(true, "Usuario eliminado correctamente."));
         } catch (Exception e) {
             log.error("Error al eliminar el usuario con ID {}", id, e);
@@ -125,7 +125,7 @@ public class UsuariosController {
         }
 
         // buscar el usuario por nomber de usuario
-        Usuario usuario = regUsuService.findByUsername(username);
+        Usuario usuario = usuariosService.findByUsername(username);
 
         // validar si el usuario existe
         if (usuario == null) {
@@ -149,15 +149,15 @@ public class UsuariosController {
     @GetMapping("/{userId}/despachos")
     public ResponseEntity<?> getDespachosForUser(@PathVariable Long userId) {
         try {
-            Usuario usuario = regUsuService.getUsuarioById(userId)
-                    .orElseThrow(() -> new RegUsuNotFoundException("User not found with ID " + userId));
+            Usuario usuario = usuariosService.getUsuarioById(userId)
+                    .orElseThrow(() -> new usuariosNotFoundException("User not found with ID " + userId));
 
             List<Despacho> despachos = usuario.getDespachos();
             if (despachos.isEmpty()) {
                 return ResponseEntity.noContent().build();
             }
             return ResponseEntity.ok(despachos);
-        } catch (RegUsuNotFoundException e) {
+        } catch (usuariosNotFoundException e) {
             log.error("Error fetching despachos for user with ID {}: {}", userId, e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(false, e.getMessage()));
         } catch (Exception e) {
@@ -170,9 +170,9 @@ public class UsuariosController {
     @PostMapping("/{userId}/despachos")
     public ResponseEntity<?> addDespachoToUser(@PathVariable Long userId, @RequestBody Despacho despacho) {
         try {
-            Usuario updatedUser = regUsuService.addDespachoToUser(userId, despacho);
+            Usuario updatedUser = usuariosService.addDespachoToUser(userId, despacho);
             return ResponseEntity.ok(updatedUser);
-        } catch (RegUsuNotFoundException e) {
+        } catch (usuariosNotFoundException e) {
             log.error("User not found with ID {}: {}", userId, e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(false, "User not found"));
         } catch (Exception e) {
@@ -185,15 +185,15 @@ public class UsuariosController {
     @GetMapping("/{userId}/roles")
     public ResponseEntity<?> getRolesForUser(@PathVariable Long userId) {
         try {
-            Usuario usuario = regUsuService.getUsuarioById(userId)
-                    .orElseThrow(() -> new RegUsuNotFoundException("User not found with ID " + userId));
+            Usuario usuario = usuariosService.getUsuarioById(userId)
+                    .orElseThrow(() -> new usuariosNotFoundException("User not found with ID " + userId));
 
             List<Rol> roles = usuario.getRoles();
             if (roles.isEmpty()) {
                 return ResponseEntity.noContent().build();
             }
             return ResponseEntity.ok(roles);
-        } catch (RegUsuNotFoundException e) {
+        } catch (usuariosNotFoundException e) {
             log.error("Error fetching roles for user with ID {}: {}", userId, e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(false, e.getMessage()));
         } catch (Exception e) {
@@ -206,9 +206,9 @@ public class UsuariosController {
     @PostMapping("/{userId}/roles")
     public ResponseEntity<?> addRoleToUser(@PathVariable Long userId, @RequestBody Rol role) {
         try {
-            Usuario updatedUser = regUsuService.addRoleToUser(userId, role);
+            Usuario updatedUser = usuariosService.addRoleToUser(userId, role);
             return ResponseEntity.ok(updatedUser);
-        } catch (RegUsuNotFoundException e) {
+        } catch (usuariosNotFoundException e) {
             log.error("User not found with ID {}: {}", userId, e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(false, "User not found"));
         } catch (Exception e) {
@@ -221,7 +221,7 @@ public class UsuariosController {
     @DeleteMapping("/{userId}/roles/{roleId}")
     public ResponseEntity<?> removeRoleFromUser(@PathVariable Long userId, @PathVariable Long roleId) {
         try {
-            regUsuService.removeRoleFromUser(userId, roleId);
+            usuariosService.removeRoleFromUser(userId, roleId);
             return ResponseEntity.ok(new ErrorResponse(true, "Role removed successfully."));
         } catch (Exception e) {
             log.error("Error removing role from user: {}", e.getMessage(), e);
@@ -233,7 +233,7 @@ public class UsuariosController {
     @DeleteMapping("/{userId}/despachos/{despachoId}")
     public ResponseEntity<?> removeDespachoFromUser(@PathVariable Long userId, @PathVariable Long despachoId) {
         try {
-            regUsuService.removeDespachoFromUser(userId, despachoId);
+            usuariosService.removeDespachoFromUser(userId, despachoId);
             return ResponseEntity.ok(new ErrorResponse(true, "Despacho removed successfully."));
         } catch (Exception e) {
             log.error("Error removing despacho from user: {}", e.getMessage(), e);
@@ -284,8 +284,8 @@ public class UsuariosController {
         return errors;
     }
 
-    static class RegUsuNotFoundException extends RuntimeException {
-        public RegUsuNotFoundException(String message) {
+    static class usuariosNotFoundException extends RuntimeException {
+        public usuariosNotFoundException(String message) {
             super(message);
         }
     }

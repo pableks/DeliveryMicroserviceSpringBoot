@@ -1,4 +1,4 @@
-com/example/DeliveryApp/controller/RegUsuControllerTest.class
-com/example/DeliveryApp/service/RegUsuServiceTest.class
-com/example/DeliveryApp/repository/RegUsuRepositoryTest.class
+com/example/DeliveryApp/controller/UsuariosControllerTest.class
+com/example/DeliveryApp/service/UsuariosServiceTest.class
+com/example/DeliveryApp/repository/UsuariosRepositoryTest.class
 com/example/DeliveryApp/DeliveryAppTests.class

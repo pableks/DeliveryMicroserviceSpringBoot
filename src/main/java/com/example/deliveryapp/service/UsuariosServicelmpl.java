@@ -17,7 +17,7 @@ import java.util.Optional;
 public class UsuariosServicelmpl implements UsuariosService {
 
     @Autowired
-    private UsuariosRepository regUsuRepository;
+    private UsuariosRepository usuariosRepository;
 
     @Autowired
     private RolRepository rolRepository;
@@ -27,24 +27,24 @@ public class UsuariosServicelmpl implements UsuariosService {
 
     @Override
     public List<Usuario> getAllUsuarios() {
-        return regUsuRepository.findAll();
+        return usuariosRepository.findAll();
     }
 
     @Override
     public Optional<Usuario> getUsuarioById(Long id) {
-        return regUsuRepository.findById(id);
+        return usuariosRepository.findById(id);
     }
 
     @Override
     public Usuario createUsuario(Usuario usuario) {
-        return regUsuRepository.save(usuario);
+        return usuariosRepository.save(usuario);
     }
 
     @Override
     public Usuario updateUsuario(Long id, Usuario usuario) {
-        if (regUsuRepository.existsById(id)) {
+        if (usuariosRepository.existsById(id)) {
             usuario.setId(id);
-            return regUsuRepository.save(usuario);
+            return usuariosRepository.save(usuario);
         } else {
             return null;
         }
@@ -52,21 +52,21 @@ public class UsuariosServicelmpl implements UsuariosService {
 
     @Override
     public void deleteUsuario(Long id) {
-        regUsuRepository.deleteById(id);
+        usuariosRepository.deleteById(id);
     }
 
     @Override
     public Usuario findByUsername(String username) {
-        return regUsuRepository.findByUsername(username);
+        return usuariosRepository.findByUsername(username);
     }
 
     @Override
     public void removeRoleFromUser(Long userId, Long roleId) {
-        Optional<Usuario> user = regUsuRepository.findById(userId);
+        Optional<Usuario> user = usuariosRepository.findById(userId);
         if (user.isPresent()) {
             Usuario usuario = user.get();
             usuario.getRoles().removeIf(rol -> rol.getId().equals(roleId));
-            regUsuRepository.save(usuario); // Save the user after removing the role
+            usuariosRepository.save(usuario); // Save the user after removing the role
         } else {
             throw new RuntimeException("User not found");
         }
@@ -74,11 +74,11 @@ public class UsuariosServicelmpl implements UsuariosService {
 
     @Override
     public void removeDespachoFromUser(Long userId, Long despachoId) {
-        Optional<Usuario> user = regUsuRepository.findById(userId);
+        Optional<Usuario> user = usuariosRepository.findById(userId);
         if (user.isPresent()) {
             Usuario usuario = user.get();
             usuario.getDespachos().removeIf(despacho -> despacho.getId().equals(despachoId));
-            regUsuRepository.save(usuario); // Save the user after removing the despacho
+            usuariosRepository.save(usuario); // Save the user after removing the despacho
         } else {
             throw new RuntimeException("User not found");
         }
@@ -86,22 +86,22 @@ public class UsuariosServicelmpl implements UsuariosService {
 
     @Override
     public Usuario addRoleToUser(Long userId, Rol role) {
-        Usuario usuario = regUsuRepository.findById(userId)
+        Usuario usuario = usuariosRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         usuario.getRoles().add(role); // Add the new role to the user's collection of roles
         role.setUsuario(usuario); // Set the user as the owner of the role
         rolRepository.save(role); // Save the new role
-        return regUsuRepository.save(usuario); // Save the user with the new role
+        return usuariosRepository.save(usuario); // Save the user with the new role
     }
 
     @Override
     public Usuario addDespachoToUser(Long userId, Despacho despacho) {
-        Usuario usuario = regUsuRepository.findById(userId)
+        Usuario usuario = usuariosRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         usuario.getDespachos().add(despacho); // Add the new despacho to the user's collection of despachos
         despacho.setUsuario(usuario); // Set the user as the owner of the despacho
         despachoRepository.save(despacho); // Save the new despacho
-        return regUsuRepository.save(usuario); // Save the user with the new despacho
+        return usuariosRepository.save(usuario); // Save the user with the new despacho
     }
 
 }

@@ -25,10 +25,10 @@ import com.example.DeliveryApp.service.UsuariosServicelmpl;
 @ExtendWith(MockitoExtension.class)
 public class UsuariosServiceTest {
     @InjectMocks
-    private UsuariosServicelmpl regUsuService;
+    private UsuariosServicelmpl usuariosService;
 
     @Mock
-    private UsuariosRepository regUsuRepositoryMock;
+    private UsuariosRepository usuariosRepositoryMock;
 
     @Mock
     private RolRepository rolRepository;
@@ -39,9 +39,9 @@ public class UsuariosServiceTest {
         usuario.setUsername("usuario_prueba");
         usuario.setPassword("password_prueba");
 
-        when(regUsuRepositoryMock.save(any())).thenReturn(usuario);
+        when(usuariosRepositoryMock.save(any())).thenReturn(usuario);
 
-        Usuario usuarioCreado = regUsuService.createUsuario(usuario);
+        Usuario usuarioCreado = usuariosService.createUsuario(usuario);
 
         assertEquals("usuario_prueba", usuarioCreado.getUsername());
         assertEquals("password_prueba", usuarioCreado.getPassword());
@@ -53,9 +53,9 @@ public class UsuariosServiceTest {
         usuario.setUsername("usuario_prueba");
         usuario.setPassword("password_prueba");
 
-        when(regUsuRepositoryMock.findByUsername("usuario_prueba")).thenReturn(usuario);
+        when(usuariosRepositoryMock.findByUsername("usuario_prueba")).thenReturn(usuario);
 
-        Usuario usuarioEncontrado = regUsuService.findByUsername("usuario_prueba");
+        Usuario usuarioEncontrado = usuariosService.findByUsername("usuario_prueba");
 
         assertEquals("usuario_prueba", usuarioEncontrado.getUsername());
         assertEquals("password_prueba", usuarioEncontrado.getPassword());
@@ -73,14 +73,14 @@ public class UsuariosServiceTest {
         updatedUser.setUsername("updated_user");
         updatedUser.setPassword("new_password");
 
-        when(regUsuRepositoryMock.existsById(userId)).thenReturn(true);
-        when(regUsuRepositoryMock.save(any(Usuario.class))).thenReturn(updatedUser);
+        when(usuariosRepositoryMock.existsById(userId)).thenReturn(true);
+        when(usuariosRepositoryMock.save(any(Usuario.class))).thenReturn(updatedUser);
 
-        Usuario result = regUsuService.updateUsuario(userId, updatedUser);
+        Usuario result = usuariosService.updateUsuario(userId, updatedUser);
 
         assertEquals("updated_user", result.getUsername());
         assertEquals("new_password", result.getPassword());
-        verify(regUsuRepositoryMock).save(updatedUser);
+        verify(usuariosRepositoryMock).save(updatedUser);
     }
 
     @Test
@@ -98,12 +98,12 @@ public class UsuariosServiceTest {
         newRole.setActivo(true);
 
         // Mock to find the user
-        when(regUsuRepositoryMock.findById(userId)).thenReturn(Optional.of(usuario));
+        when(usuariosRepositoryMock.findById(userId)).thenReturn(Optional.of(usuario));
 
         // Make sure to mock the save method properly to return the modified user
-        when(regUsuRepositoryMock.save(any(Usuario.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(usuariosRepositoryMock.save(any(Usuario.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Usuario updatedUser = regUsuService.addRoleToUser(userId, newRole);
+        Usuario updatedUser = usuariosService.addRoleToUser(userId, newRole);
 
         assertNotNull(updatedUser, "The returned user should not be null");
         assertEquals(1, updatedUser.getRoles().size(), "The role list size should be 1");

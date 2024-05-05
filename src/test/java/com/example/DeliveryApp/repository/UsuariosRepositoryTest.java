@@ -15,7 +15,7 @@ import com.example.DeliveryApp.repository.UsuariosRepository;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class UsuariosRepositoryTest {
     @Autowired
-    private UsuariosRepository regUsuRepository;
+    private UsuariosRepository usuariosRepository;
 
     @Test
     public void guardarUsuarioTest() {
@@ -23,7 +23,7 @@ public class UsuariosRepositoryTest {
         usuario.setUsername("usuario_prueba");
         usuario.setPassword("password_prueba");
 
-        Usuario usuarioGuardado = regUsuRepository.save(usuario);
+        Usuario usuarioGuardado = usuariosRepository.save(usuario);
 
         assertNotNull(usuarioGuardado.getId());
         assertEquals("usuario_prueba", usuarioGuardado.getUsername());
@@ -36,9 +36,9 @@ public class UsuariosRepositoryTest {
         usuario.setUsername("usuario_prueba");
         usuario.setPassword("password_prueba");
 
-        regUsuRepository.save(usuario);
+        usuariosRepository.save(usuario);
 
-        Usuario usuarioEncontrado = regUsuRepository.findByUsername("usuario_prueba");
+        Usuario usuarioEncontrado = usuariosRepository.findByUsername("usuario_prueba");
 
         assertNotNull(usuarioEncontrado);
         assertEquals("usuario_prueba", usuarioEncontrado.getUsername());
